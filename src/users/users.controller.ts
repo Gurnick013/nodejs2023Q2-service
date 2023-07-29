@@ -3,7 +3,7 @@ import {
   Get,
   Post,
   Body,
-  Patch,
+  Put,
   Param,
   Delete,
   HttpCode,
@@ -19,7 +19,6 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
-    console.log(Body);
     return this.usersService.create(createUserDto);
   }
 
@@ -33,7 +32,7 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
