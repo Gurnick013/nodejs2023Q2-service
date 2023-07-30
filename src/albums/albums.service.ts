@@ -3,9 +3,9 @@ import { HttpStatus } from '@nestjs/common/enums';
 import { HttpException } from '@nestjs/common/exceptions';
 import { CreateAlbumDto } from './dto/createAlbums.dto';
 import { UpdateAlbumDto } from './dto/updateAlbums.dto';
-import DB from '../dataBase/DB';
 import { FavoritesService } from '../favorites/favorites.service';
 import { TracksService } from '../tracks/tracks.service';
+import DB from '../dataBase/DB';
 
 @Injectable()
 export class AlbumsService {

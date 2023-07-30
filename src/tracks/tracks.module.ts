@@ -7,5 +7,6 @@ import { FavoritesModule } from '../favorites/favorites.module';
   imports: [forwardRef(() => FavoritesModule)],
   controllers: [TracksController],
   providers: [TracksService],
+  exports: [TracksService],
 })
 export class TracksModule {}
