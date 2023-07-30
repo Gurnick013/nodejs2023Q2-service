@@ -17,7 +17,7 @@ export class ArtistsService {
   }
 
   findOne(id: string) {
-    const artist = this.db.artists.findOne('id', id);
+    const artist = this.getOne(id);
     if (!artist) {
       throw new HttpException('Artist not found', HttpStatus.NOT_FOUND);
     }
@@ -25,7 +25,7 @@ export class ArtistsService {
   }
 
   update(id: string, updateArtistDto: UpdateArtistDto) {
-    const artist = this.db.artists.findOne('id', id);
+    const artist = this.getOne(id);
     if (!artist) {
       throw new HttpException('Artist not found', HttpStatus.NOT_FOUND);
     }
@@ -33,10 +33,18 @@ export class ArtistsService {
   }
 
   remove(id: string) {
-    const artist = this.db.artists.findOne('id', id);
+    const artist = this.getOne(id);
     if (!artist) {
       throw new HttpException('Artist not found', HttpStatus.NOT_FOUND);
     }
     return this.db.artists.delete(id);
+  }
+
+  getOne(id: string) {
+    return this.db.artists.findOne('id', id);
+  }
+
+  getMany(ids: string[]) {
+    return this.db.artists.findManyInArrayAnyOf('id', ids);
   }
 }

@@ -17,7 +17,7 @@ export class AlbumsService {
   }
 
   findOne(id: string) {
-    const album = this.db.albums.findOne('id', id);
+    const album = this.getOne(id);
     if (!album) {
       throw new HttpException('Album not found', HttpStatus.NOT_FOUND);
     }
@@ -25,7 +25,7 @@ export class AlbumsService {
   }
 
   update(id: string, dto: UpdateAlbumDto) {
-    const album = this.db.albums.findOne('id', id);
+    const album = this.getOne(id);
     if (!album) {
       throw new HttpException('Album not found', HttpStatus.NOT_FOUND);
     }
@@ -33,10 +33,18 @@ export class AlbumsService {
   }
 
   remove(id: string) {
-    const album = this.db.albums.findOne('id', id);
+    const album = this.getOne(id);
     if (!album) {
       throw new HttpException('Album not found', HttpStatus.NOT_FOUND);
     }
     return this.db.albums.delete(id);
+  }
+
+  getOne(id: string) {
+    return this.db.albums.findOne('id', id);
+  }
+
+  getMany(ids: string[]) {
+    return this.db.albums.findManyInArrayAnyOf('id', ids);
   }
 }
