@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common/enums';
 import { HttpException } from '@nestjs/common/exceptions';
 import DB from '../dataBase/DB';
@@ -10,6 +10,9 @@ import { FavoritesType } from './types/types';
 @Injectable()
 export class FavoritesService {
   constructor(
+    @Inject(forwardRef(() => ArtistsService))
+    @Inject(forwardRef(() => AlbumsService))
+    @Inject(forwardRef(() => TracksService))
     private artistsService: ArtistsService,
     private albumsService: AlbumsService,
     private tracksService: TracksService,
@@ -65,5 +68,12 @@ export class FavoritesService {
     return {
       message: `Id: ${id} successfully removed from ${type}`,
     };
+  }
+
+  removeFromAnother(type: FavoritesType, id: string) {
+    const entity = this.db.favorites.findOneByType(type);
+    if (entity.includes(id)) {
+      this.db.favorites.delete(type, id);
+    }
   }
 }

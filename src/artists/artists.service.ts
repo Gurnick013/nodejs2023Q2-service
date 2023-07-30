@@ -1,13 +1,24 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common/enums';
 import { HttpException } from '@nestjs/common/exceptions';
 import { CreateArtistDto } from './dto/createArtists.dto';
 import { UpdateArtistDto } from './dto/updateArtists.dto';
 import DB from '../dataBase/DB';
+import { FavoritesService } from '../favorites/favorites.service';
+import { AlbumsService } from '../albums/albums.service';
+import { TracksService } from '../tracks/tracks.service';
 
 @Injectable()
 export class ArtistsService {
-  constructor(private db: DB) {}
+  constructor(
+    @Inject(forwardRef(() => FavoritesService))
+    @Inject(forwardRef(() => AlbumsService))
+    @Inject(forwardRef(() => TracksService))
+    private favoritesService: FavoritesService,
+    private albumsService: AlbumsService,
+    private tracksService: TracksService,
+    private db: DB,
+  ) {}
   create(dto: CreateArtistDto) {
     return this.db.artists.create(dto);
   }
@@ -37,6 +48,9 @@ export class ArtistsService {
     if (!artist) {
       throw new HttpException('Artist not found', HttpStatus.NOT_FOUND);
     }
+    this.favoritesService.removeFromAnother('artists', id);
+    this.albumsService.findManyAndNullArtistId(id);
+    this.tracksService.findManyAndNullArtistId(id);
     return this.db.artists.delete(id);
   }
 

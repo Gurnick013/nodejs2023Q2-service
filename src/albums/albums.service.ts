@@ -1,13 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common/enums';
 import { HttpException } from '@nestjs/common/exceptions';
 import { CreateAlbumDto } from './dto/createAlbums.dto';
 import { UpdateAlbumDto } from './dto/updateAlbums.dto';
 import DB from '../dataBase/DB';
+import { FavoritesService } from '../favorites/favorites.service';
+import { TracksService } from '../tracks/tracks.service';
 
 @Injectable()
 export class AlbumsService {
-  constructor(private db: DB) {}
+  constructor(
+    @Inject(forwardRef(() => FavoritesService))
+    @Inject(forwardRef(() => TracksService))
+    private favoritesService: FavoritesService,
+    private tracksService: TracksService,
+    private db: DB,
+  ) {}
   create(dto: CreateAlbumDto) {
     return this.db.albums.create(dto);
   }
@@ -37,6 +45,8 @@ export class AlbumsService {
     if (!album) {
       throw new HttpException('Album not found', HttpStatus.NOT_FOUND);
     }
+    this.favoritesService.removeFromAnother('albums', id);
+    this.tracksService.findManyAndNullAlbumId(id);
     return this.db.albums.delete(id);
   }
 
@@ -46,5 +56,16 @@ export class AlbumsService {
 
   getMany(ids: string[]) {
     return this.db.albums.findManyInArrayAnyOf('id', ids);
+  }
+
+  findManyAndNullArtistId(id: string) {
+    const albums = this.db.albums.findMany('artistId', id);
+    if (albums) {
+      albums.forEach((album) => {
+        album.artistId = null;
+        this.db.albums.update(album.id, album);
+      });
+    }
+    return albums;
   }
 }
