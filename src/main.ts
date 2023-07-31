@@ -4,6 +4,7 @@ import { join } from 'path';
 import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
+import 'dotenv/config';
 import * as yaml from 'js-yaml';
 
 async function bootstrap() {
