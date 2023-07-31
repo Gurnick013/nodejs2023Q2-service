@@ -8,7 +8,13 @@
 ## Downloading
 
 ```
-git clone {repository URL}
+git clone https://github.com/Gurnick013/nodejs2023Q2-service.git
+```
+
+## Moving to dev branch
+
+```
+git checkout dev
 ```
 
 ## Installing NPM modules
@@ -31,7 +37,7 @@ For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
 After application running open new terminal and enter:
 
-To run all tests without authorization
+To run all tests
 
 ```
 npm run test
@@ -41,12 +47,6 @@ To run only one of all test suites
 
 ```
 npm run test -- <path to suite>
-```
-
-To run all test with authorization
-
-```
-npm run test:auth
 ```
 
 To run only specific test suite with authorization
