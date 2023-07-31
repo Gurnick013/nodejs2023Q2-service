@@ -1,10 +1,19 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { readFile } from 'fs/promises';
+import { join } from 'path';
+import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { AppModule } from './app.module';
+import * as yaml from 'js-yaml';
 
 async function bootstrap() {
   const PORT = process.env.PORT || 4000;
   const app = await NestFactory.create(AppModule);
+  const swaggerDocument = yaml.load(
+    await readFile(join('.', 'doc', 'api.yaml'), 'utf8'),
+  ) as OpenAPIObject;
+  SwaggerModule.setup('/doc', app, swaggerDocument);
+
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(PORT, () => console.log(`Server started on port = ${PORT}`));
 }
